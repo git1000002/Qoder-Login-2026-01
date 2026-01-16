@@ -65,15 +65,15 @@ jobs:
           echo "=== Qoder Login ==="
           export PATH="$HOME/.qoder/bin:$PATH"
           
-          # 使用环境变量方式登录
+          # 浣跨敤鐜鍙橀噺鏂瑰紡鐧诲綍
           export QODER_PERSONAL_ACCESS_TOKEN="${{ github.event.inputs.qoder_token }}"
           
-          # 尝试多种登录方式
+          # 灏濊瘯澶氱鐧诲綍鏂瑰紡
           qoder auth login 2>&1 || \
           qoder login 2>&1 || \
           echo "Login command finished"
           
-          # 验证登录状态
+          # 楠岃瘉鐧诲綍鐘舵€?
           qoder auth whoami 2>&1 || qoder whoami 2>&1 || echo "Whoami check done"
           
       - name: Callback Notification
