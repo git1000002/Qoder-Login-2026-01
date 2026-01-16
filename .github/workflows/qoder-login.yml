@@ -68,17 +68,16 @@ jobs:
           # 浣跨敤鐜鍙橀噺鏂瑰紡鐧诲綍
           export QODER_PERSONAL_ACCESS_TOKEN="${{ github.event.inputs.qoder_token }}"
           
-          # 妫€鏌?qodercli 浣嶇疆
-          which qodercli || echo "qodercli not found"
-          ls -la $HOME/.local/bin/ || true
+          # 妫€鏌?qodercli 鐗堟湰鍜屽彲鐢ㄥ懡浠?
+          qodercli --version
+          qodercli --help || true
           
-          # 灏濊瘯鐧诲綍
-          qodercli auth login 2>&1 || \
-          qodercli login 2>&1 || \
-          echo "Login command finished"
+          # 灏濊瘯涓嶅悓鐧诲綍鏂瑰紡
+          echo "Trying with token env var..."
+          qodercli config set token "${{ github.event.inputs.qoder_token }}" 2>&1 || true
+          qodercli auth status 2>&1 || true
           
-          # 楠岃瘉鐧诲綍鐘舵€?
-          qodercli auth whoami 2>&1 || qodercli whoami 2>&1 || echo "Whoami check done"
+          echo "Login step done"
           
       - name: Callback Notification
         if: always()
