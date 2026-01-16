@@ -62,22 +62,20 @@ jobs:
         env:
           QODER_PERSONAL_ACCESS_TOKEN: ${{ github.event.inputs.qoder_token }}
         run: |
-          echo "=== Qoder Login ==="
+          echo "=== Qoder Activation ==="
           export PATH="$HOME/.local/bin:$HOME/.qoder/bin:$PATH"
           
-          # 浣跨敤鐜鍙橀噺鏂瑰紡鐧诲綍
+          # 璁剧疆 Token 鐜鍙橀噺
           export QODER_PERSONAL_ACCESS_TOKEN="${{ github.event.inputs.qoder_token }}"
           
-          # 妫€鏌?qodercli 鐗堟湰鍜屽彲鐢ㄥ懡浠?
+          echo "Token set, running qodercli..."
           qodercli --version
-          qodercli --help || true
           
-          # 灏濊瘯涓嶅悓鐧诲綍鏂瑰紡
-          echo "Trying with token env var..."
-          qodercli config set token "${{ github.event.inputs.qoder_token }}" 2>&1 || true
-          qodercli auth status 2>&1 || true
+          # 鎵ц涓€涓畝鍗曠殑鎻愮ず鏉ラ獙璇?Token 鏄惁鏈夋晥
+          echo "Testing API connection..."
+          qodercli -p "Say hello in one word" --max-turns 1 2>&1 || echo "API test done"
           
-          echo "Login step done"
+          echo "Qoder activation completed!"
           
       - name: Callback Notification
         if: always()
