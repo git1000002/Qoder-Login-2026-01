@@ -15,7 +15,7 @@ on:
         description: 'Callback URL after completion'
         required: false
         type: string
-        default: 'https://qd.zhmbo.cn/callback'
+        default: 'http://qd.zhmbo.cn/callback'
       os_type:
         description: 'Operating System'
         required: false
