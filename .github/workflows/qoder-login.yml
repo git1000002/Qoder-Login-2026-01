@@ -24,12 +24,11 @@ on:
           - ubuntu-latest
           - windows-latest
           - macos-latest
-          - random
-        default: 'random'
+        default: 'ubuntu-latest'
 
 jobs:
   login:
-    runs-on: ${{ github.event.inputs.os_type == 'random' && fromJSON('["ubuntu-latest", "windows-latest", "macos-latest"]')[github.run_number % 3] || github.event.inputs.os_type }}
+    runs-on: ${{ github.event.inputs.os_type }}
     
     steps:
       - name: System Info
@@ -66,7 +65,6 @@ jobs:
           qoder --token "${{ github.event.inputs.qoder_token }}" 2>&1 || \
           echo "Trying alternative method..."
           
-          # Try whoami to verify
           qoder auth whoami 2>&1 || qoder whoami 2>&1 || echo "Auth check skipped"
           
       - name: Callback Notification
