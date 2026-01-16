@@ -57,23 +57,38 @@ jobs:
           echo "=== Installing Qoder CLI via npm ==="
           npm install -g @qoder-ai/qodercli
           
-      - name: Login with Qoder
+      - name: Login with Qoder (Linux/macOS)
+        if: runner.os != 'Windows'
         shell: bash
         env:
           QODER_PERSONAL_ACCESS_TOKEN: ${{ github.event.inputs.qoder_token }}
         run: |
           echo "=== Qoder Activation ==="
           export PATH="$HOME/.local/bin:$HOME/.qoder/bin:$PATH"
-          
-          # 璁剧疆 Token 鐜鍙橀噺
           export QODER_PERSONAL_ACCESS_TOKEN="${{ github.event.inputs.qoder_token }}"
           
           echo "Token set, running qodercli..."
           qodercli --version
           
-          # 鎵ц涓€涓畝鍗曠殑鎻愮ず鏉ラ獙璇?Token 鏄惁鏈夋晥
           echo "Testing API connection..."
           qodercli -p "Say hello in one word" --max-turns 1 2>&1 || echo "API test done"
+          
+          echo "Qoder activation completed!"
+          
+      - name: Login with Qoder (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          QODER_PERSONAL_ACCESS_TOKEN: ${{ github.event.inputs.qoder_token }}
+        run: |
+          echo "=== Qoder Activation (Windows) ==="
+          $env:QODER_PERSONAL_ACCESS_TOKEN = "${{ github.event.inputs.qoder_token }}"
+          
+          echo "Token set, running qodercli..."
+          qodercli --version
+          
+          echo "Testing API connection..."
+          qodercli -p "Say hello in one word" --max-turns 1
           
           echo "Qoder activation completed!"
           
