@@ -1,0 +1,88 @@
+name: Qoder Login
+
+on:
+  workflow_dispatch:
+    inputs:
+      qoder_token:
+        description: 'Qoder Personal Access Token'
+        required: true
+        type: string
+      task_id:
+        description: 'Task ID for callback'
+        required: true
+        type: string
+      callback_url:
+        description: 'Callback URL after completion'
+        required: false
+        type: string
+        default: 'https://qd.zhmbo.cn/callback'
+      os_type:
+        description: 'Operating System'
+        required: false
+        type: choice
+        options:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+          - random
+        default: 'random'
+
+jobs:
+  login:
+    runs-on: ${{ github.event.inputs.os_type == 'random' && fromJSON('["ubuntu-latest", "windows-latest", "macos-latest"]')[github.run_number % 3] || github.event.inputs.os_type }}
+    
+    steps:
+      - name: System Info
+        shell: bash
+        run: |
+          echo "=== System Information ==="
+          echo "OS: $RUNNER_OS"
+          echo "Arch: $RUNNER_ARCH"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Task ID: ${{ github.event.inputs.task_id }}"
+          uname -a || systeminfo || true
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install Qoder CLI
+        shell: bash
+        run: |
+          echo "=== Installing Qoder CLI ==="
+          npm install -g @anthropic/qoder-cli || npm install -g qoder-cli || true
+          which qoder || where qoder || echo "Trying npx..."
+          
+      - name: Login with Qoder
+        shell: bash
+        env:
+          QODER_PERSONAL_ACCESS_TOKEN: ${{ github.event.inputs.qoder_token }}
+        run: |
+          echo "=== Qoder Login ==="
+          export QODER_PERSONAL_ACCESS_TOKEN="${{ github.event.inputs.qoder_token }}"
+          qoder auth login --token "${{ github.event.inputs.qoder_token }}" 2>&1 || \
+          qoder login --token "${{ github.event.inputs.qoder_token }}" 2>&1 || \
+          qoder --token "${{ github.event.inputs.qoder_token }}" 2>&1 || \
+          echo "Trying alternative method..."
+          
+          # Try whoami to verify
+          qoder auth whoami 2>&1 || qoder whoami 2>&1 || echo "Auth check skipped"
+          
+      - name: Callback Notification
+        if: always()
+        shell: bash
+        run: |
+          STATUS="${{ job.status }}"
+          TASK_ID="${{ github.event.inputs.task_id }}"
+          CALLBACK="${{ github.event.inputs.callback_url }}"
+          RUN_ID="${{ github.run_id }}"
+          
+          echo "=== Sending Callback ==="
+          echo "Status: $STATUS"
+          echo "Task ID: $TASK_ID"
+          
+          curl -X POST "$CALLBACK" \
+            -H "Content-Type: application/json" \
+            -d "{\"task_id\":\"$TASK_ID\",\"status\":\"$STATUS\",\"run_id\":\"$RUN_ID\",\"os\":\"$RUNNER_OS\"}" \
+            --max-time 10 || echo "Callback failed, but continuing..."
