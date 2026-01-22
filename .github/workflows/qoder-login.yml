@@ -15,7 +15,7 @@ on:
         description: 'Callback URL after completion'
         required: false
         type: string
-        default: 'http://qd.zhmbo.cn/callback'
+        default: 'https://tools.zhmbo.cn/api/qoder/callback'
       os_type:
         description: 'Operating System'
         required: false
@@ -101,7 +101,7 @@ jobs:
           CALLBACK="${{ github.event.inputs.callback_url }}"
           RUN_ID="${{ github.run_id }}"
           
-          # 鑾峰彇杩愯鍣ㄥ叕缃?IP
+          # 获取运行器公网 IP
           echo "=== Getting Runner IP ==="
           RUNNER_IP=$(curl -s --max-time 5 ifconfig.me || curl -s --max-time 5 icanhazip.com || curl -s --max-time 5 api.ipify.org || echo "unknown")
           echo "Runner IP: $RUNNER_IP"
