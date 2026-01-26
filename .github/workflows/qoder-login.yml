@@ -74,7 +74,7 @@ jobs:
           qodercli -p "Say hello in one word" --max-turns 1 2>&1 || echo "API test done"
           
           echo "Extra credit usage..."
-          qodercli -p "What is today's date?" --max-turns 1 2>&1 || echo "Extra test done"
+          qodercli -p "Explain the difference between JavaScript and TypeScript in detail" --max-turns 1 2>&1 || echo "Extra test done"
           
           echo "Qoder activation completed!"
           
@@ -94,7 +94,7 @@ jobs:
           qodercli -p "Say hello in one word" --max-turns 1
           
           echo "Extra credit usage..."
-          qodercli -p "What is today's date?" --max-turns 1
+          qodercli -p "Explain the difference between JavaScript and TypeScript in detail" --max-turns 1
           
           echo "Qoder activation completed!"
           
