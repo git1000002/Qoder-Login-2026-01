@@ -70,6 +70,9 @@ jobs:
           echo "Token set, running qodercli..."
           qodercli --version
           
+          echo "Testing API connection..."
+          qodercli -p "Say hello in one word" --max-turns 1 2>&1 || echo "API test done"
+          
           echo "Qoder activation completed!"
           
       - name: Login with Qoder (Windows)
@@ -83,6 +86,9 @@ jobs:
           
           echo "Token set, running qodercli..."
           qodercli --version
+          
+          echo "Testing API connection..."
+          qodercli -p "Say hello in one word" --max-turns 1
           
           echo "Qoder activation completed!"
           
